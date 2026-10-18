@@ -4,3 +4,36 @@ body {
   background: #f4f6fb;
   color: #1e293b;
 }
+.architecture {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  background: #0f172a;
+  border-radius: 12px;
+}
+
+.architecture-bloc {
+  flex: 1 1 180px;
+  padding: 20px;
+  color: white;
+  border: 2px solid #22d3ee;
+  border-radius: 10px;
+  box-shadow: 0 0 15px #22d3ee;
+}
+.architecture {
+  display: block;
+  text-align: center;
+}
+
+.architecture-fleche {
+  color: #22d3ee;
+  font-size: 36px;
+  padding: 10px;
+}
+
+.architecture-donnees {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}

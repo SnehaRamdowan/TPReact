@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_URL } from '../config';
 
 interface Produit {
     id: number;
@@ -18,7 +19,7 @@ function ListeProduits() {
 
         async function charger() {
             try {
-                const reponse = await fetch('http://localhost:3000/api/produits');
+                const reponse = await fetch(`${API_URL}/api/produits`)
 
                 if (!reponse.ok) {
                     throw new Error('Réponse du serveur incorrecte : ' + reponse.status);

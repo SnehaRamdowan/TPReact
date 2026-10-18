@@ -8,6 +8,8 @@ import ListePosts from './components/ListePosts';
 import ListeTaches from './components/ListeTaches';
 import ListeProduits from './components/ListeProduits';
 import AjouterTechnologie from './components/AjouterTechnologie';
+import CompteurVisites from './components/CompteurVisites';
+import Architecture from './components/Architecture';
 
 function App() {
   const [recherche, setRecherche] = useState('');
@@ -27,10 +29,12 @@ function App() {
 
   return (
       <main>
-        <Header
-            titre="TechTrends — Galerie des tendances"
-            phrase="Les technologies qui font le cours 420-TT4"
-        />
+          <Header
+              titre="TechTrends — Galerie des tendances"
+              phrase="Les technologies qui font le cours 420-TT4"
+          />
+
+          <CompteurVisites />
 
         <Recherche valeur={recherche} onChange={setRecherche} />
 
@@ -81,7 +85,9 @@ function App() {
           <h2>Ajouter une technologie</h2>
           <AjouterTechnologie />
         </section>
+          <Architecture />
       </main>
+
   );
 }
 
