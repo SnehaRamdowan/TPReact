@@ -7,11 +7,15 @@ function CompteurVisites() {
 
     useEffect(() => {
         let annule = false;
+        let minuterie: ReturnType<typeof setTimeout> | undefined;
+        const controleur = new AbortController();
 
         async function charger() {
             try {
-                const reponse = await fetch(`${API_URL}/api/visites`);
-
+                const reponse = await fetch(`${API_URL}/api/visites`, {
+                    signal: controleur.signal,
+                    cache: 'no-store'
+                });
 
                 if (!reponse.ok) {
                     throw new Error('Compteur indisponible');
@@ -19,37 +23,65 @@ function CompteurVisites() {
 
                 const donnees = await reponse.json();
 
+                if (
+                    typeof donnees.total !== 'number' ||
+                    !Number.isFinite(donnees.total)
+                ) {
+                    throw new Error('Réponse du compteur invalide');
+                }
+
                 if (!annule) {
                     setTotal(donnees.total);
                     setErreur('');
                 }
             } catch {
                 if (!annule) {
-                    setErreur('Impossible de charger le compteur');
+                    setTotal(null);
+                    setErreur('Compteur temporairement indisponible.');
+                }
+            } finally {
+                if (!annule) {
+                    minuterie = setTimeout(() => {
+                        void charger();
+                    }, 3000);
                 }
             }
         }
 
-        charger();
-
-        const intervalle = setInterval(charger, 3000);
+        void charger();
 
         return () => {
             annule = true;
-            clearInterval(intervalle);
+            controleur.abort();
+            clearTimeout(minuterie);
         };
     }, []);
 
     return (
         <section>
             <h2>Nombre de visites</h2>
-            {erreur ? (
-                <p role="alert">{erreur}</p>
-            ) : (
-                <p style={{ fontSize: '48px', fontWeight: 'bold' }}>
-                    {total ?? 'Chargement…'}
-                </p>
-            )}
+
+            <div role="status" aria-live="polite">
+                {erreur ? (
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+                        <p className="font-semibold">{erreur}</p>
+
+                        <p className="mb-0 text-sm">
+                            Ce compteur dépend de Redis.
+                            Nouvelle tentative automatique toutes les
+                            3 secondes.
+                        </p>
+                    </div>
+                ) : (
+                    <p className="text-5xl font-bold text-cyan-700">
+                        {total ?? 'Chargement…'}
+                    </p>
+                )}
+            </div>
+
+            <p className="mt-3 text-sm text-slate-500">
+                Nombre de chargements de la page.
+            </p>
         </section>
     );
 }
